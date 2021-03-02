@@ -43,7 +43,6 @@ for file in Path(directory).glob('**/*.pcap'):
                                 '-i', str(file),
                                 '-o', str(file) + '_custom.pcap'])
         os.remove(str(file) + '.cache')
-        print('[!]Deleted cache..')
     else:
         print('[-]Ignored non-libpcap file..')
 
