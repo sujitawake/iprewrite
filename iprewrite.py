@@ -1,7 +1,16 @@
 from pathlib import Path
 from subprocess import call, DEVNULL, STDOUT, check_call
 import sys
+import os
 import mimetypes
+import argparse
+
+
+# Init parser
+parser = argparse.ArgumentParser(description='Recursive IP Rewrite Tool')
+parser.add_argument('--dir', '-d', type=str, help='Source PCAP directory')
+parser.add_argument('--file', '-f', type=str, help='Source PCAP file')
+args = parser.parse_args()
 
 
 # Check if required binaries exist, exit otherwise
@@ -15,12 +24,12 @@ for each_binary in executables:
 
 
 # Pull PCAPs list
-directory =  sys.argv[1]
-# directory = 'test'
+directory = args.dir
+pcapfile = args.file
 for file in Path(directory).glob('**/*.pcap'):
     mime = mimetypes.guess_type(file)[0]
     if mime == 'application/vnd.tcpdump.pcap':
-        print('[*]Generating cache for: %s..' % (file))
+        print('\n[*]Generating cache: %s..' % (file))
         check_call(['tcpprep', '--port', '-i',
             str(file), '--cachefile',
             str(file) + '.cache'
@@ -28,11 +37,13 @@ for file in Path(directory).glob('**/*.pcap'):
                    stdout=DEVNULL,
                    stderr=STDOUT)
 
-        print('[*]Rewriting IP..')
+        print('[*]Rewriting IP: 172.16.1.10 <-> 172.16.1.254')
         check_call(['tcprewrite', '-c', str(file) + '.cache',
                                 '--endpoints', '172.16.1.10:172.16.1.254',
                                 '-i', str(file),
                                 '-o', str(file) + '_custom.pcap'])
-        print('[+]Done..\n')
+        os.remove(str(file) + '.cache')
+        print('[!]Deleted cache..')
     else:
-        print('[-]Ignoring non-libpcap based file')
+        print('[-]Ignored non-libpcap file..')
+
