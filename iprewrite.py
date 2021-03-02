@@ -1,6 +1,5 @@
 from pathlib import Path
 from subprocess import call, DEVNULL, STDOUT, check_call
-import sys
 import os
 import mimetypes
 import argparse
