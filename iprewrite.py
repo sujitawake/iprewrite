@@ -15,8 +15,8 @@ for each_binary in executables:
 
 
 # Pull PCAPs list
-# directory =  sys.argv[1]
-directory = 'test'
+directory =  sys.argv[1]
+# directory = 'test'
 for file in Path(directory).glob('**/*.pcap'):
     mime = mimetypes.guess_type(file)[0]
     if mime == 'application/vnd.tcpdump.pcap':
